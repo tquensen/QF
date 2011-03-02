@@ -10,8 +10,6 @@
  */
 function example_home_page($parameters = array())
 {
-    //global $qf_config, $qf_db, $qf_i18n //uncommend if needed
-    
     //this is the default: (if returned null or an array $parameters)
     //return qf_parse('example', 'home', $parameters);
 }

@@ -35,7 +35,7 @@ try {
     //qf_init_i18n($language);
 
     $routeData = qf_parse_route($route);
-    $pageContent = qf_call_page($routeData['module'], $routeData['page'], $routeData['parameter'], true, true);
+    $pageContent = qf_call_page($routeData['module'], $routeData['page'], $routeData['parameter'], true);
     echo qf_parse_template($pageContent);
 } catch (Exception $e) {
     //display the error page with template

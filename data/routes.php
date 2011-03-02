@@ -1,12 +1,29 @@
 <?php
 $qf_routes = array();
-$qf_routes['home'] = array('example', 'home',
-    array(
+$qf_routes['home'] = array(
+    'url' => 'home',
+    'module' => 'example',
+    'page' => 'home',
+    'parameter' => array(
         'foo' => false,
         'bar' => false
     )
 );
-$qf_routes['about'] = array('example', 'about');
-$qf_routes['contact'] = array('example', 'contact');
-
-$qf_routes['projects'] = array('example', 'projects', array('selectedProject' => false));
+$qf_routes['about'] = array(
+    'url' => 'about',
+    'module' => 'example',
+    'page' => 'about'
+);
+$qf_routes['contact'] = array(
+    'url' => 'contact',
+    'module' => 'example',
+    'page' => 'contact'
+);
+$qf_routes['projects'] = array(
+    'url' => 'projects',
+    'module' => 'example',
+    'page' => 'projects',
+    'parameter' => array(
+        'selectedProject' => false
+    )
+);

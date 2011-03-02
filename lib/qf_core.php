@@ -10,9 +10,9 @@ function qf_parse_route($route)
     $found = false;
     $routeParameters = '';
 
-    if (empty($route) && qf_config('home_route') && qf_routes($qf_config['home_route'])) {
+    if (empty($route) && qf_config('home_route') && qf_routes(qf_config('home_route'))) {
         $routeName = qf_config('home_route');
-        $routeData = qf_routes($qf_config['home_route']);
+        $routeData = qf_routes(qf_config('home_route'));
         $found = true;
     } else {
         foreach ((array) qf_routes() as $routeName => $routeData) {
@@ -48,11 +48,10 @@ function qf_parse_route($route)
  * @param string $module the module containing the page
  * @param string $page the page
  * @param array $parameter parameters for the page
- * @param bool $display404onError whether to display the 404 page if the required page was not found or not
  * @param bool $isMainRoute whether this page call is the main call (used as main content in the template) or not
  * @return string the parsed output of the page
  */
-function qf_call_page($module, $page, $parameter = array(), $display404onError = false, $isMainRoute = false)
+function qf_call_page($module, $page, $parameter = array(), $isMainRoute = false)
 {
     if (file_exists(BASEPATH.'modules/'.$module.'/functions.php')) {
         require_once(BASEPATH.'modules/'.$module.'/functions.php');
@@ -73,18 +72,18 @@ function qf_call_page($module, $page, $parameter = array(), $display404onError =
         }
     }
 
-    return qf_parse($module, $page, $parameter, $display404onError);
+    return qf_parse($module, $page, $parameter, $isMainRoute);
 }
 
 /**
  * parses the given page and returns the output
  *
- * inside the page, you have direct access to any given parameter, $qf_config and $qf_i18n (if i18n is activated)
+ * inside the page, you have direct access to any given parameter
  *
  * @param string $module the module containing the page
  * @param string $page the page
  * @param array $parameter parameters for the page
- * @param bool $_display404onError whether to display the 404 page if the required page was not found or not
+ * @param bool $_display404onError whether to display the 404 page if the required page was not found or display nothing
  * @return string the parsed output of the page
  */
 function qf_parse($module, $page, $parameter = array(), $_display404onError = false)
@@ -105,7 +104,7 @@ function qf_parse($module, $page, $parameter = array(), $_display404onError = fa
 /**
  * parses the template with the given content
  *
- * inside the template, you have direct access to the page content $content, $qf_config and $qf_i18n (if i18n is activated)
+ * inside the template, you have direct access to the page content $content
  *
  * @param string $content the parsed output of the current page
  * @return string the output of the template

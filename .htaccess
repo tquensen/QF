@@ -1,0 +1,26 @@
+RewriteEngine on
+#i18n
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteRule ^([a-z]{2})/(.*)$ index.php?language=$1&route=$2
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?route=$1
+
+AddDefaultCharset utf-8
+
+<IfModule mod_deflate.c>
+SetOutputFilter DEFLATE
+</IfModule>
+
+<IfModule mod_expires.c>
+<Files ~ "\.(png|gif|jpg|jpeg|js|css|ico|eot|ttf|otf|svg)$">
+ExpiresActive On
+ExpiresDefault "now plus 1 years"
+</Files>
+</IfModule>
+
+<Files ~ "\.(htm|html|php)$">
+    FileETag None
+    Header set Cache-Control "no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+</Files>

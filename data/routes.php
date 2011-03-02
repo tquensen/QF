@@ -1,6 +1,6 @@
 <?php
-$qf_routes = array();
-$qf_routes['home'] = array(
+$qf_config['routes'] = array();
+$qf_config['routes']['home'] = array(
     'url' => 'home',
     'module' => 'example',
     'page' => 'home',
@@ -9,17 +9,17 @@ $qf_routes['home'] = array(
         'bar' => false
     )
 );
-$qf_routes['about'] = array(
+$qf_config['routes']['about'] = array(
     'url' => 'about',
     'module' => 'example',
     'page' => 'about'
 );
-$qf_routes['contact'] = array(
+$qf_config['routes']['contact'] = array(
     'url' => 'contact',
     'module' => 'example',
     'page' => 'contact'
 );
-$qf_routes['projects'] = array(
+$qf_config['routes']['projects'] = array(
     'url' => 'projects',
     'module' => 'example',
     'page' => 'projects',

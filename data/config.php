@@ -11,7 +11,7 @@ $qf_config['current_route'] = $qf_config['current_module'] = $qf_config['current
 
 
 //autoloading
-$qf_config['autoload_paths'] = array(BASEPATH, BASEPATH.'lib');
+$qf_config['autoload_paths'] = array(QF_BASEPATH, QF_BASEPATH.'lib');
 
 //i18n
 /*
@@ -24,7 +24,7 @@ $qf_config['current_language'] = $qf_config['default_language'];
 
 //database connection
 /*
-$qf_config['db'] = array(
+$qf_config['dbconnection'] = array(
     'driver' => 'mysql:host=localhost;dbname=qfdb', //A valid PDO dsn. @see http://de3.php.net/manual/de/pdo.construct.php
     'username' => 'root', //The user name for the DSN string. This parameter is optional for some PDO drivers.
     'password' => '', //The password for the DSN string. This parameter is optional for some PDO drivers.

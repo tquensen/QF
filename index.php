@@ -10,40 +10,44 @@ if (in_array(@$_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'))) {
 ini_set('display_errors', QF_DEBUG ? '1' : '0');
 ini_set('log_errors', '1');
 
-define('BASEPATH', dirname(__FILE__).'/');
+define('QF_BASEPATH', dirname(__FILE__).'/');
 
 try {
-    require_once(BASEPATH.'data/config.php');
-    require_once(BASEPATH.'data/routes.php');
-    require_once(BASEPATH.'lib/qf_core.php');
-    require_once(BASEPATH.'lib/qf_autoload.php');
-    require_once(BASEPATH.'lib/qf_more.php');
-    //require_once(BASEPATH.'lib/qf_i18n.php'); //internationalisation / translations
-    require_once(BASEPATH.'lib/functions.php');
+
+    require_once(QF_BASEPATH.'data/config.php');
+    require_once(QF_BASEPATH.'data/routes.php');
+    require_once(QF_BASEPATH.'lib/qf_autoload.php');
+    require_once(QF_BASEPATH.'lib/functions.php');
+
+    $config = new qfConfig($qf_config);
+    $qf = new qfCore($config); // or new qfCoreI18n($config); to add i18n-capability to getUrl/redirectRoute methods
+
+    //i18n
+    //$language = isset($_GET['language']) ? $_GET['language'] : '';
+    //$qf->i18n = new qfI18n($qf, $language);
+    //$qf->t = $qf->i18n->get();
+
+    //database
+    //$qf->qfDB = new qfDB($qf);
+    //$qf->db = $qf->db->get();
 
     //start a session if needed
     //session_name('your_session_name');
     //session_start();
 
     $route = isset($_GET['route']) ? $_GET['route'] : '';
+    $routeData = $qf->parseRoute($route);
+    $pageContent = $qf->callPage($routeData['module'], $routeData['page'], $routeData['parameter'], true);
+    echo $qf->parseTemplate($pageContent);
 
-    //database (accessable as qf_db() or global $qf_db;)
-    //qf_init_db();
-
-    //i18n (accessable as qf_i18n() or global $qf_i18n;)
-    //$language = isset($_GET['language']) ? $_GET['language'] : '';
-    //qf_init_i18n($language);
-
-    $routeData = qf_parse_route($route);
-    $pageContent = qf_call_page($routeData['module'], $routeData['page'], $routeData['parameter'], true);
-    echo qf_parse_template($pageContent);
 } catch (Exception $e) {
+    
     //display the error page with template
     try {
-        echo qf_parse_template(qf_parse('error', '500', array('exception' => $e)));
+        echo $qf->parseTemplate($qf->parse('error', '500', array('exception' => $e)));
     } catch (Exception $e) {
         //seems like the error was inside the template or error page
         //display a fallback page
-        require(BASEPATH.'templates/error.php');
+        require(QF_BASEPATH.'templates/error.php');
     }
 }

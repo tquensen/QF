@@ -8,8 +8,8 @@
  * return an array to parse the default page with the returned array as parameters,
  * return a string (like the return value of a qf_parse call) to display that output.
  */
-function example_home_page($parameters = array())
+function example_home_page(qfCore $qf, $parameters = array())
 {
     //this is the default: (if returned null or an array $parameters)
-    //return qf_parse('example', 'home', $parameters);
+    //return $qf->parse('example', 'home', $parameters);
 }

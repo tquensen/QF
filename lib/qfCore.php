@@ -85,7 +85,6 @@ class qfCore
 
     /**
      *
-     * @global array $qf_routes
      * @param string $route the key of the route to get
      * @return mixed the routes array or a specifig route (if $route is set)
      */
@@ -146,7 +145,7 @@ class qfCore
     public function parse($module, $page, $parameter = array(),
             $_display404onError = false)
     {
-        if (!file_exists(QF_BASEPATH . 'modules/' . $module . '/page.' . $page . '.php')) {
+        if (!file_exists(QF_BASEPATH . 'modules/' . $module . '/'.$page . '.php')) {
             if ($_display404onError) {
                 return $this->parse('error', '404');
             } else {
@@ -156,7 +155,7 @@ class qfCore
         $qf = $this;
         extract($parameter, EXTR_SKIP);
         ob_start();
-        require(QF_BASEPATH . 'modules/' . $module . '/page.' . $page . '.php');
+        require(QF_BASEPATH . 'modules/' . $module . '/' . $page . '.php');
         return ob_get_clean();
     }
 

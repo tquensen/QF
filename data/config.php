@@ -14,13 +14,13 @@ $qf_config['current_route'] = $qf_config['current_module'] = $qf_config['current
 $qf_config['autoload_paths'] = array(QF_BASEPATH, QF_BASEPATH.'lib');
 
 //i18n
-/*
-$qf_config['languages'] = array('en');
-$qf_config['default_language'] = 'en';
+
+$qf_config['languages'] = array('en', 'de');
+$qf_config['default_language'] = $qf_config['languages'][0];
 
 //fallback for current_language
 $qf_config['current_language'] = $qf_config['default_language'];
- */
+
 
 //database connection
 /*

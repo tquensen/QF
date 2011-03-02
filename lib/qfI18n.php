@@ -23,8 +23,8 @@ class qfI18n
         $qf->current_language = $language;
 
         $i18n = array();
-        if (file_exists(QF_BASEPATH . 'data/i18n_' . $language . '.php')) {
-            include(QF_BASEPATH . 'data/i18n_' . $language . '.php');
+        if (file_exists(QF_BASEPATH . 'data/i18n/' . $language . '.php')) {
+            include(QF_BASEPATH . 'data/i18n/' . $language . '.php');
         }
         $this->translation = new MiniMVC_Translation($i18n);
     }

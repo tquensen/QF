@@ -1,6 +1,8 @@
 <?php
 error_reporting(E_ALL | E_STRICT);
 
+define('QF_CLI', false);
+
 //show errors only on localhost
 if (in_array(@$_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'))) {
     define('QF_DEBUG', true);
@@ -16,16 +18,23 @@ try {
 
     require_once(QF_BASEPATH.'data/config.php');
     require_once(QF_BASEPATH.'data/routes.php');
-    require_once(QF_BASEPATH.'lib/qf_autoload.php');
+    require_once(QF_BASEPATH.'lib/qfAutoload.php');
     require_once(QF_BASEPATH.'lib/functions.php');
 
+    $autoloader = new qfAutoload();
+    spl_autoload_register(array($autoloader, 'autoload'));
+
     $config = new qfConfig($qf_config);
+    $autoloader->setPaths($config->autoload_paths);
+    
     $qf = new qfCore($config); // or new qfCoreI18n($config); to add i18n-capability to getUrl/redirectRoute methods
 
+    
+    
     //i18n
-    //$language = isset($_GET['language']) ? $_GET['language'] : '';
-    //$qf->i18n = new qfI18n($qf, $language);
-    //$qf->t = $qf->i18n->get();
+    $language = isset($_GET['language']) ? $_GET['language'] : '';
+    $qf->i18n = new qfI18n($qf, $language);
+    $qf->t = $qf->i18n->get();
 
     //database
     //$qf->qfDB = new qfDB($qf);

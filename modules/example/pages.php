@@ -6,7 +6,7 @@
  *
  * return null / nothing to parse the default page with the unmodified parameters,
  * return an array to parse the default page with the returned array as parameters,
- * return a string (like the return value of a qf_parse call) to display that output.
+ * return a string (like the return value of a $qf->parse call) to display that output.
  */
 function example_home_page(qfCore $qf, $parameters = array())
 {

@@ -1,7 +1,15 @@
+#protect cli.php
+Order Deny,Allow
+Allow from All
+<Files "cli.php">
+Deny from All
+</Files>
+
 RewriteEngine on
+
 #i18n
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteRule ^([a-z]{2})/(.*)$ index.php?language=$1&route=$2
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([a-z]{2})/(.*)$ index.php?language=$1&route=$2
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php?route=$1
@@ -19,7 +27,7 @@ ExpiresDefault "now plus 1 years"
 </Files>
 </IfModule>
 
-<Files ~ "\.(htm|html|php)$">
+<Files ~ "\.php$">
     FileETag None
     Header set Cache-Control "no-cache, must-revalidate, max-age=0"
     Header set Pragma "no-cache"

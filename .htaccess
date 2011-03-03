@@ -9,9 +9,11 @@ RewriteEngine on
 
 #i18n
 RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([a-z]{2})/(.*)\.(json|xml)$ index.php?language=$1&route=$2&format=$3
 RewriteRule ^([a-z]{2})/(.*)$ index.php?language=$1&route=$2
 
 RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)\.(json|xml)$ index.php?route=$1&format=$2
 RewriteRule ^(.*)$ index.php?route=$1
 
 AddDefaultCharset utf-8

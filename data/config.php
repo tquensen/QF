@@ -2,6 +2,9 @@
 $qf_config = array();
 
 $qf_config['template'] = 'default';
+$qf_config['default_format'] = 'html';
+
+
 $qf_config['home_route'] = 'home';
 $qf_config['base_url'] = '/'; //http://example.com;
 //$qf_config['static_url'] = 'http://static.example.com/';

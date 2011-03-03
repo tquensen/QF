@@ -21,10 +21,11 @@ class qfCoreI18n extends qfCore
      *
      * @param string $route the name of the route to link to
      * @param array $params parameter to add to the url
+     * @param string $format the output format (json, xml, ..) or null
      * @param mixed $language the target language, null for current, false for default/none, string for a specific language (must exist in$qf_config['languages'])
      * @return string the url to the route including the language, base_url (if available) and parameter
      */
-    public function getUrl($route, $params = array(), $language = null)
+    public function getUrl($route, $params = array(), $format = null, $language = null)
     {
         $baseurl = $this->getConfig('base_url', '/');
         if ($language === null) {
@@ -43,9 +44,9 @@ class qfCoreI18n extends qfCore
         }
         $routeUrl = isset($routeData['url']) ? $routeData['url'] : $route;
         if (substr($routeUrl, -1) == '/') {
-            return $baseurl . $routeUrl . implode('/', array_map('urlencode', $params)) . '/';
+            return $baseurl . $routeUrl . implode('/', array_map('urlencode', $params)) . '/' . ($format ? '.'.$format : '');
         } else {
-            return $baseurl . $routeUrl . '/' . implode('/', array_map('urlencode', $params));
+            return $baseurl . $routeUrl . '/' . implode('/', array_map('urlencode', $params)) . ($format ? '.'.$format : '');
         }
     }
 

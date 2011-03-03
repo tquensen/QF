@@ -76,9 +76,8 @@ class qfCore
             'module' => isset($routeData['module']) ? $routeData['module'] : array_shift($routeData),
             'page' => isset($routeData['page']) ? $routeData['page'] : array_shift($routeData),
             'parameter' => $this->prepareParameters(
-                    isset($routeData['parameter']) ? (array)$routeData['parameter']
-                                : (array)array_shift($routeData),
-                    $routeParameters ? explode('/', $routeParameters) : array()
+                isset($routeData['parameter']) ? (array)$routeData['parameter'] : (array)array_shift($routeData),
+                $routeParameters ? explode('/', $routeParameters) : array()
             )
         );
     }
@@ -106,8 +105,7 @@ class qfCore
      * @param bool $isMainRoute whether this page call is the main call (used as main content in the template) or not
      * @return string the parsed output of the page
      */
-    public function callPage($module, $page, $parameter = array(),
-            $isMainRoute = false)
+    public function callPage($module, $page, $parameter = array(), $isMainRoute = false)
     {
         if (file_exists(QF_BASEPATH . 'modules/' . $module . '/functions.php')) {
             require_once(QF_BASEPATH . 'modules/' . $module . '/functions.php');
@@ -142,10 +140,20 @@ class qfCore
      * @param bool $_display404onError whether to display the 404 page if the required page was not found or display nothing
      * @return string the parsed output of the page
      */
-    public function parse($module, $page, $parameter = array(),
-            $_display404onError = false)
+    public function parse($module, $page, $parameter = array(), $_display404onError = false)
     {
-        if (!file_exists(QF_BASEPATH . 'modules/' . $module . '/'.$page . '.php')) {
+
+        $formatString = ($this->format) ? '.' . $this->format : '';
+
+        if (file_exists(QF_BASEPATH . 'modules/' . $module . '/' . $page . $formatString . '.php')) {
+            $file = QF_BASEPATH . 'modules/' . $module . '/' . $page . $formatString . '.php';
+        } elseif (!$this->format && file_exists(QF_BASEPATH . 'modules/' . $module . '/' . $page . '.' . $this->default_format . '.php')) {
+            $file = QF_BASEPATH . 'modules/' . $module . '/' . $page . '.' . $this->default_format . '.php';
+        } else {
+            $file = false;
+        }
+
+        if (!$file) {
             if ($_display404onError) {
                 return $this->parse('error', '404');
             } else {
@@ -153,9 +161,9 @@ class qfCore
             }
         }
         $qf = $this;
-        extract($parameter, EXTR_SKIP);
+        extract($parameter, EXTR_OVERWRITE);
         ob_start();
-        require(QF_BASEPATH . 'modules/' . $module . '/' . $page . '.php');
+        require($file);
         return ob_get_clean();
     }
 
@@ -170,14 +178,46 @@ class qfCore
     public function parseTemplate($content)
     {
         $templateName = $this->template;
+        $format = $this->format;
+        $file = false;
 
-        if (!$templateName || !file_exists(QF_BASEPATH . 'templates/' . $templateName . '.php')) {
+        if (is_array($templateName)) {
+            if ($format) {
+                $templateName = isset($templateName[$format]) ? $templateName[$format] : (isset($templateName['all']) ? $templateName['all'] : null);
+            } else {
+                if (isset($templateName['default'])) {
+                    $templateName = $templateName['default'];
+                } else {
+                    $templateName = isset($templateName[$this->default_format]) ? $templateName[$this->default_format] : (isset($templateName['all']) ? $templateName['all'] : null);
+                }
+            }
+        }
+
+        if ($templateName === false) {
+            return $content;
+        }
+
+        if ($format) {
+            if ($templateName && file_exists(QF_BASEPATH . 'templates/' . $templateName . '.' . $format . '.php')) {
+                $file = QF_BASEPATH . 'templates/' . $templateName . '.' . $format . '.php';
+            } elseif (file_exists(QF_BASEPATH . 'templates/default.' . $format . '.php')) {
+                $file = QF_BASEPATH . 'templates/default.' . $format . '.php';
+            }
+        } elseif ($templateName) {
+            if (file_exists(QF_BASEPATH . 'templates/' . $templateName . '.php')) {
+                $file = QF_BASEPATH . 'templates/' . $templateName . '.php';
+            } elseif (file_exists(QF_BASEPATH . 'templates/' . $templateName . '.' . $this->default_format . '.php')) {
+                $file = QF_BASEPATH . 'templates/' . $templateName . '.' . $this->default_format . '.php';
+            }
+        }
+
+        if (!$file) {
             return $content;
         }
 
         $qf = $this;
         ob_start();
-        require(QF_BASEPATH . 'templates/' . $templateName . '.php');
+        require($file);
         return ob_get_clean();
     }
 
@@ -226,9 +266,10 @@ class qfCore
      *
      * @param string $route the name of the route to link to
      * @param array $params parameter to add to the url
+     * @param string $format the output format (json, xml, ..) or null
      * @return string the url to the route including base_url (if available) and parameter
      */
-    public function getUrl($route, $params = array())
+    public function getUrl($route, $params = array(), $format = null)
     {
         $baseurl = $this->getConfig('base_url', '/');
         if ((!$route || $route == $this->home_route) && empty($params)) {
@@ -239,9 +280,9 @@ class qfCore
         }
         $routeUrl = isset($routeData['url']) ? $routeData['url'] : $route;
         if (substr($routeUrl, -1) == '/') {
-            return $baseurl . $routeUrl . implode('/', array_map('urlencode', $params)) . '/';
+            return $baseurl . $routeUrl . implode('/', array_map('urlencode', $params)) . '/' . ($format ? '.' . $format : '');
         } else {
-            return $baseurl . $routeUrl . '/' . implode('/', array_map('urlencode', $params));
+            return $baseurl . $routeUrl . '/' . implode('/', array_map('urlencode', $params)) . ($format ? '.' . $format : '');
         }
     }
 
@@ -257,8 +298,7 @@ class qfCore
         if (!$baseurl = $this->static_url) {
             $baseurl = $this->getConfig('base_url', '/');
         }
-        return $baseurl . 'static/' . ($module ? 'module/' . $module . '/static/'
-                    : '') . $file;
+        return $baseurl . 'static/' . ($module ? 'module/' . $module . '/static/' : '') . $file;
     }
 
     /**

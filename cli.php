@@ -4,7 +4,7 @@ ini_set('display_errors', '0');
 error_reporting(E_ALL | E_STRICT);
 
 //show errors only on localhost
-if (isset($_SERVER['REMOTE_ADDR']) || !isset($argc) || $argc < 2) {
+if (isset($_SERVER['REMOTE_ADDR']) || !isset($_SERVER['argc']) || $_SERVER['argc'] < 2) {
     header('HTTP/1.1 403 Forbidden');
     exit;
 }
@@ -47,7 +47,7 @@ try {
         if ($output = $cli->callTask($taskData['module'], $taskData['task'], $taskData['parameter'])) {
             echo $output;
         } else {
-//            '[no output]'."\n";
+            '[no output]'."\n";
         }
     } else {
         '[invalid task]'."\n";

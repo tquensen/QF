@@ -28,15 +28,17 @@ class qfCoreI18n extends qfCore
     public function getUrl($route, $params = array(), $format = null, $language = null)
     {
         $baseurl = $this->getConfig('base_url', '/');
+        $currentLanguage = $this->getConfig('current_language');
+        $defaultLanguage = $this->getConfig('default_language');
         if ($language === null) {
-            if ($this->current_language && $this->current_language != $this->default_language) {
-                $baseurl .= $this->current_language . '/';
+            if ($currentLanguage && $currentLanguage != $defaultLanguage) {
+                $baseurl .= $currentLanguage . '/';
             }
-        } elseif ($language && in_array($language, $this->getConfig('languages', array())) && $language != $this->default_language) {
+        } elseif ($language && in_array($language, $this->getConfig('languages', array())) && $language != $defaultLanguage) {
             $baseurl .= $language . '/';
         }
 
-        if ((!$route || $route == $this->home_route) && empty($params)) {
+        if ((!$route || $route == $this->getConfig('home_route')) && empty($params)) {
             return $baseurl;
         }
         if (!$routeData = $this->getRoute($route)) {

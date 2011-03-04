@@ -26,11 +26,11 @@ try {
 
     $config = new qfConfig($qf_config);
     $autoloader->setPaths($config->autoload_paths);
-    
+
+    $config->format = isset($_GET['format']) ? $_GET['format'] : null;
+
     $qf = new qfCore($config); // or new qfCoreI18n($config); to add i18n-capability to getUrl/redirectRoute methods
 
-    $qf->format = isset($_GET['format']) ? $_GET['format'] : null;
-    
     //i18n
     $language = isset($_GET['language']) ? $_GET['language'] : '';
     $qf->i18n = new qfI18n($qf, $language);

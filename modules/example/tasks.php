@@ -8,9 +8,14 @@
  * return an array to parse the default view with the returned array as parameters,
  * return a string (like the return value of a qf->parse call) to display that output.
  */
-function example_exampleTask_task(qfCore $qf, $parameters = array())
+class example_Tasks extends qfController
 {
-    //this is the default: (if returned null or an array $parameters)
-    //return $qf->parse('example', 'exampleTask', $parameters);
-    var_dump($parameters);
+
+    public function exampleTask($parameter = array())
+    {
+        //this is the default: (if returned null or an array $parameter)
+        //return $qf->parse('example', 'exampleTask', $parameter);
+        var_dump($parameter);
+    }
+
 }

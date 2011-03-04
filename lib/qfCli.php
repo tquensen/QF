@@ -22,19 +22,23 @@ class qfCli
         if (file_exists(QF_BASEPATH . 'modules/' . $module . '/functions.php')) {
             require_once(QF_BASEPATH . 'modules/' . $module . '/functions.php');
         }
-        if (file_exists(QF_BASEPATH . 'modules/' . $module . '/tasks.php')) {
-            require_once(QF_BASEPATH . 'modules/' . $module . '/tasks.php');
+        if (file_exists(QF_BASEPATH . 'modules/' . $module . '/Tasks.php')) {
+            require_once(QF_BASEPATH . 'modules/' . $module . '/Tasks.php');
         }
-        if (function_exists($module . '_' . $task . '_task')) {
-            $return = call_user_func($module . '_' . $task . '_task', $this->qf, $parameter);
+        $className = $module . '_Tasks';
+        if (class_exists($className) && method_exists($className, $task)) {
+            $controller = new $className($this->qf);
+            $return = $controller->$task($parameter);
             if (is_array($return)) {
                 $parameter = $return;
             } elseif (is_string($return)) {
                 return $return;
+            } elseif ($return !== null) {
+                return false;
             }
+            return $this->qf->parse($module, $task, $parameter);
         }
-
-        return $this->qf->parse($module, $task, $parameter);
+        return false;
     }
 
     /**
@@ -132,7 +136,7 @@ class qfCli
      */
     public function getTask($task = null)
     {
-        $tasks = $this->qf->tasks;
+        $tasks = $this->qf->getConfig('tasks');
         if (!$task) {
             return $tasks;
         }

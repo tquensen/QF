@@ -1,8 +1,6 @@
 <?php
-/**
- * MiniMVC_Translation holds an array of translated data
- */
-class MiniMVC_Translation implements ArrayAccess
+
+class qfTranslation implements ArrayAccess
 {
 	protected $translations = array();
 

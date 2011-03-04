@@ -2,7 +2,7 @@
 
 class qfCore
 {
-    protected $config = null;
+    protected $storage = array();
 
     public function __construct(qfConfig $config)
     {
@@ -11,12 +11,12 @@ class qfCore
 
     public function __get($key)
     {
-        return $this->config->__get($key);
+        return isset($this->storage[$key]) ? $this->storage[$key] : null;
     }
 
     public function __set($key, $value)
     {
-        $this->config->__set($key, $value);
+        $this->storage[$key] = $value;
     }
 
     /**
@@ -51,8 +51,8 @@ class qfCore
         $found = false;
         $routeParameters = '';
 
-        if (empty($route) && $this->home_route && $routeData = $this->getRoute($this->home_route)) {
-            $routeName = $this->home_route;
+        if (empty($route) && ($homeRoute = $this->getConfig('home_route')) && $routeData = $this->getRoute($homeRoute)) {
+            $routeName = $homeRoute;
             $found = true;
         } else {
             foreach ((array)$this->getRoute() as $routeName => $routeData) {
@@ -71,10 +71,10 @@ class qfCore
 
         if (!$found) {
             $routeName = false;
-            $routeData = array('error', '404');
+            $routeData = array('error', 'error404');
         }
 
-        $this->current_route = $routeName;
+        $this->setConfig('current_route', $routeName);
 
         return array(
             'module' => isset($routeData['module']) ? $routeData['module'] : array_shift($routeData),
@@ -93,7 +93,7 @@ class qfCore
      */
     public function getRoute($route = null)
     {
-        $routes = $this->routes;
+        $routes = $this->getConfig('routes');
         if (!$route) {
             return $routes;
         }
@@ -114,23 +114,27 @@ class qfCore
         if (file_exists(QF_BASEPATH . 'modules/' . $module . '/functions.php')) {
             require_once(QF_BASEPATH . 'modules/' . $module . '/functions.php');
         }
-        if (file_exists(QF_BASEPATH . 'modules/' . $module . '/pages.php')) {
-            require_once(QF_BASEPATH . 'modules/' . $module . '/pages.php');
+        if (file_exists(QF_BASEPATH . 'modules/' . $module . '/Pages.php')) {
+            require_once(QF_BASEPATH . 'modules/' . $module . '/Pages.php');
         }
         if ($isMainRoute) {
-            $this->current_module = $module;
-            $this->current_page = $page;
+            $this->setConfig('current_module', $module);
+            $this->setConfig('current_page', $page);
         }
-        if (function_exists($module . '_' . $page . '_page')) {
-            $return = call_user_func($module . '_' . $page . '_page', $this, $parameter);
+        $className = $module . '_Pages';
+        if (class_exists($className) && method_exists($className, $page)) {
+            $controller = new $className($this);
+            $return = $controller->$page($parameter);
             if (is_array($return)) {
                 $parameter = $return;
             } elseif (is_string($return)) {
                 return $return;
+            } elseif ($return !== null) {
+                return false;
             }
+            return $this->parse($module, $page, $parameter);
         }
-
-        return $this->parse($module, $page, $parameter, $isMainRoute);
+        return false;
     }
 
     /**
@@ -141,28 +145,23 @@ class qfCore
      * @param string $module the module containing the page
      * @param string $page the page
      * @param array $parameter parameters for the page
-     * @param bool $_display404onError whether to display the 404 page if the required page was not found or display nothing
      * @return string the parsed output of the page
      */
-    public function parse($module, $page, $parameter = array(), $_display404onError = false)
+    public function parse($module, $page, $parameter = array())
     {
-
-        $formatString = ($this->format) ? '.' . $this->format : '';
+        $format = $this->getConfig('format');
+        $formatString = $format ? '.' . $format : '';
 
         if (file_exists(QF_BASEPATH . 'modules/' . $module . '/' . $page . $formatString . '.php')) {
             $file = QF_BASEPATH . 'modules/' . $module . '/' . $page . $formatString . '.php';
-        } elseif (!$this->format && file_exists(QF_BASEPATH . 'modules/' . $module . '/' . $page . '.' . $this->default_format . '.php')) {
-            $file = QF_BASEPATH . 'modules/' . $module . '/' . $page . '.' . $this->default_format . '.php';
+        } elseif (!$format && file_exists(QF_BASEPATH . 'modules/' . $module . '/' . $page . '.' . $this->getConfig('default_format') . '.php')) {
+            $file = QF_BASEPATH . 'modules/' . $module . '/' . $page . '.' . $this->getConfig('default_format') . '.php';
         } else {
             $file = false;
         }
 
         if (!$file) {
-            if ($_display404onError) {
-                return $this->parse('error', '404');
-            } else {
-                return '';
-            }
+            return '';
         }
         $qf = $this;
         extract($parameter, EXTR_OVERWRITE);
@@ -181,8 +180,9 @@ class qfCore
      */
     public function parseTemplate($content)
     {
-        $templateName = $this->template;
-        $format = $this->format;
+        $templateName = $this->getConfig('template');
+        $format = $this->getConfig('format');
+        $defaultFormat = $this->getConfig('default_format');
         $file = false;
 
         if (is_array($templateName)) {
@@ -192,7 +192,7 @@ class qfCore
                 if (isset($templateName['default'])) {
                     $templateName = $templateName['default'];
                 } else {
-                    $templateName = isset($templateName[$this->default_format]) ? $templateName[$this->default_format] : (isset($templateName['all']) ? $templateName['all'] : null);
+                    $templateName = isset($templateName[$defaultFormat]) ? $templateName[$defaultFormat] : (isset($templateName['all']) ? $templateName['all'] : null);
                 }
             }
         }
@@ -210,8 +210,8 @@ class qfCore
         } elseif ($templateName) {
             if (file_exists(QF_BASEPATH . 'templates/' . $templateName . '.php')) {
                 $file = QF_BASEPATH . 'templates/' . $templateName . '.php';
-            } elseif (file_exists(QF_BASEPATH . 'templates/' . $templateName . '.' . $this->default_format . '.php')) {
-                $file = QF_BASEPATH . 'templates/' . $templateName . '.' . $this->default_format . '.php';
+            } elseif (file_exists(QF_BASEPATH . 'templates/' . $templateName . '.' . $defaultFormat . '.php')) {
+                $file = QF_BASEPATH . 'templates/' . $templateName . '.' . $defaultFormat . '.php';
             }
         }
 
@@ -276,7 +276,7 @@ class qfCore
     public function getUrl($route, $params = array(), $format = null)
     {
         $baseurl = $this->getConfig('base_url', '/');
-        if ((!$route || $route == $this->home_route) && empty($params)) {
+        if ((!$route || $route == $this->getConfig('home_route')) && empty($params)) {
             return $baseurl;
         }
         if (!$routeData = $this->getRoute($route)) {
@@ -299,7 +299,7 @@ class qfCore
      */
     public function getStaticUrl($file, $module = null)
     {
-        if (!$baseurl = $this->static_url) {
+        if (!$baseurl = $this->getConfig('static_url')) {
             $baseurl = $this->getConfig('base_url', '/');
         }
         return $baseurl . 'static/' . ($module ? 'module/' . $module . '/static/' : '') . $file;
@@ -315,7 +315,7 @@ class qfCore
      */
     public function callError($errorCode = 404, $message = '', $exception = null)
     {
-        return $this->callPage('error', $errorCode, array('message' => $message, 'exception' => $exception));
+        return $this->callPage('error', 'error'.$errorCode, array('message' => $message, 'exception' => $exception), true);
     }
 
 }

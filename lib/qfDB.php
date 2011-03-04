@@ -19,7 +19,7 @@ class qfDB
     {
         $this->qf = $qf;
 
-        $db = $this->qf->dbconnection;
+        $db = $this->qf->getConfig('dbconnection');
         if (is_array($db)) {
             $this->connection = new PDO(
                 $db['driver'],

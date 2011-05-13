@@ -302,7 +302,7 @@ class qfCore
         if (!$baseurl = $this->getConfig('static_url')) {
             $baseurl = $this->getConfig('base_url', '/');
         }
-        return $baseurl . 'static/' . ($module ? 'module/' . $module . '/static/' : '') . $file;
+        return $baseurl . ($module ? 'module/' . $module . '/static/' : 'static/') . $file;
     }
 
     /**

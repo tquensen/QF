@@ -15,7 +15,7 @@ class example_Pages extends qfController
     public function home($parameter = array())
     {
         //this is the default: (if returned null or an array $parameters)
-        //return $qf->parse('example', 'home', $parameter);
+        //return $this->qf->parse('example', 'home', $parameter);
     }
 
     public function about($parameter = array())

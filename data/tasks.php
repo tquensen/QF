@@ -1,7 +1,8 @@
 <?php
 $qf_config['tasks'] = array();
+
 $qf_config['tasks']['example'] = array(
-    'module' => 'example',
+    'module' => 'default',
     'task' => 'exampleTask',
     'parameter' => array(
         'foo' => 'defaultFoo',

@@ -2,6 +2,9 @@
 
 class qfCli
 {
+    /**
+     * @var qfCore
+     */
     protected $qf = null;
 
     public function __construct(qfCore $qf)

@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @property qfConfig $config
+ */
 class qfCore
 {
     protected $storage = array();
@@ -71,16 +73,21 @@ class qfCore
 
         if (!$found) {
             $routeName = false;
-            $routeData = array('error', 'error404');
+            $routeData = array('module' => 'error', 'page' => 'error404');
         }
 
+        if (empty($routeData['module']) || empty($routeData['page'])) {
+             $routeName = false;
+             $routeData = array('module' => 'error', 'page' => 'error500');
+        }
+        
         $this->setConfig('current_route', $routeName);
 
         return array(
-            'module' => isset($routeData['module']) ? $routeData['module'] : array_shift($routeData),
-            'page' => isset($routeData['page']) ? $routeData['page'] : array_shift($routeData),
+            'module' => $routeData['module'],
+            'page' => $routeData['page'],
             'parameter' => $this->prepareParameters(
-                isset($routeData['parameter']) ? (array)$routeData['parameter'] : (array)array_shift($routeData),
+                isset($routeData['parameter']) ? (array)$routeData['parameter'] : array(),
                 $routeParameters ? explode('/', $routeParameters) : array()
             )
         );

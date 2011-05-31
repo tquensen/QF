@@ -2,6 +2,9 @@
 
 class qfDB
 {
+    /**
+     * @var qfCore
+     */
     protected $qf = null;
     protected $connection = null;
 

@@ -1,6 +1,10 @@
 <?php
 $qf_config = array();
 
+$qf_config['website_title'] = 'QF Website';
+$qf_config['meta_description'] = 'Default meta description.';
+
+
 $qf_config['template'] = 'default';
 $qf_config['default_format'] = 'html';
 

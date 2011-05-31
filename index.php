@@ -32,18 +32,28 @@ try {
     $qf = new qfCore($config); // or new qfCoreI18n($config); to add i18n-capability to getUrl/redirectRoute methods
 
     //i18n
+    /*
     $language = isset($_GET['language']) ? $_GET['language'] : '';
     $qf->i18n = new qfI18n($qf, $language);
     $qf->t = $qf->i18n->get();
 
+    //set i18n title/description
+    $qf->config->website_title = $qf->t->website_title;
+    $qf->config->meta_description = $qf->t->meta_description;
+    */
+    
     //database
-    //$qf->qfDB = new qfDB($qf);
-    //$qf->db = $qf->db->get();
-
+    /*
+    $qf->qfDB = new qfDB($qf);
+    $qf->db = $qf->db->get();
+    */
+    
     //start a session if needed
-    //session_name('your_session_name');
-    //session_start();
-
+    /*
+    session_name('your_session_name');
+    session_start();
+    */
+    
     $route = isset($_GET['route']) ? $_GET['route'] : '';
     $routeData = $qf->parseRoute($route);
     $pageContent = $qf->callPage($routeData['module'], $routeData['page'], $routeData['parameter'], true);

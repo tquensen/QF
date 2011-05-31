@@ -2,7 +2,14 @@
 
 class qfI18n
 {
+    /**
+     * @var qfCore
+     */
     protected $qf = null;
+    
+    /**
+     * @var qfTranslation
+     */
     protected $translation = null;
 
     /**
@@ -30,7 +37,7 @@ class qfI18n
 
     /**
      *
-     * @return MiniMVC_Translation
+     * @return qfTranslation
      */
     function get()
     {
@@ -44,7 +51,7 @@ class qfI18n
      * @param string $key the key/name of the translation or null to return the completet translation instance
      * @param string|array $params parameter values, either as query string "foo=foovalue&bar=baz", as array('foo'=>'foovalue','bar'=>'baz') or a s simple string "foo", will be converted to param=foo
      * @param int|null $subkey if the translation is an array, this specifies which array key to use. when passing null or an invalid key, the last element will be used.
-     * @return MiniMVC_Translation|string the translation class (if $key = null) or the translated string for a given key
+     * @return qfTranslation|string the translation class (if $key = null) or the translated string for a given key
      */
     public function t($key = null, $params = null, $subkey = null)
     {

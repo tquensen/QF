@@ -1,29 +1,29 @@
 <?php
 $qf_config['routes'] = array();
+
 $qf_config['routes']['home'] = array(
     'url' => 'home',
-    'module' => 'example',
-    'page' => 'home',
-    'parameter' => array(
-        'foo' => false,
-        'bar' => false
-    )
+    'module' => 'default',
+    'page' => 'home'
 );
-$qf_config['routes']['about'] = array(
-    'url' => 'about',
-    'module' => 'example',
-    'page' => 'about'
-);
-$qf_config['routes']['contact'] = array(
-    'url' => 'contact',
-    'module' => 'example',
-    'page' => 'contact'
-);
+
+/* examples
 $qf_config['routes']['projects'] = array(
     'url' => 'projects',
-    'module' => 'example',
+    'module' => 'default',
     'page' => 'projects',
     'parameter' => array(
         'selectedProject' => false
+    )
+);
+*/
+
+//default static pages / fallback (this must be the LAST route!)
+$qf_config['routes']['static'] = array(
+    'url' => '',
+    'module' => 'default',
+    'page' => 'staticPage',
+    'parameter' => array(
+        'page' => false
     )
 );

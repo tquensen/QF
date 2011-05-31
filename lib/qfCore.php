@@ -59,11 +59,7 @@ class qfCore
         } else {
             foreach ((array)$this->getRoute() as $routeName => $routeData) {
                 $routeUrl = isset($routeData['url']) ? $routeData['url'] : $routeName;
-                if (0 === strpos($route, $routeUrl)) {
-                    $routeParameters = substr($route, strlen($routeUrl));
-                    if ($routeParameters && substr($routeParameters, 0, 1) !== '/') {
-                        continue;
-                    }
+                if ($routeUrl === '' || 0 === strpos($route, $routeUrl)) {
                     $found = true;
                     $routeParameters = trim(substr($route, strlen($routeUrl)), ' /');
                     break;

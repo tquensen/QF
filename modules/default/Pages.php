@@ -29,25 +29,22 @@ class default_Pages extends qfController
      */
     public function staticPage($parameter = array())
     {
-        //set title/description
-        if ($title = $this->qf->t->example_home_title) {
-            
-        }
-        //$this->qf->config->page_title = $this->qf->t->example_home_title;
-        //$this->qf->config->meta_description = $this->qf->t->example_home_description;
-        if (empty($parameter['page']) || !preg_match('/[\w\-\+]/i', $parameter['page']) || !$content = $this->qf->parse('example', 'static/'.$parameter['page'])) {
+        if (empty($parameter['page']) || !preg_match('/[\w\-\+]/i', $parameter['page']) || !$content = $this->qf->parse('default', 'static/'.$parameter['page'])) {
             return $this->qf->callError();
         }
         
-        $titleKey = 'page_'.$parameter['page'].'_title';
-        $descriptionKey = 'page_'.$parameter['page'].'_description';
-        $title = $this->qf->t->get($titleKey);
-        $description = $this->qf->t->get($descriptionKey);
-        if ($title && $title != $titleKey) {
-            $this->qf->config->page_title = $title;
-        }
-        if ($description && $description != $descriptionKey) {
-            $this->qf->config->meta_description = $description;
+        //set title/description (if i18n is activated)
+        if ($this->qf->t) {
+            $titleKey = 'page_'.$parameter['page'].'_title';
+            $descriptionKey = 'page_'.$parameter['page'].'_description';
+            $title = $this->qf->t->get($titleKey);
+            $description = $this->qf->t->get($descriptionKey);
+            if ($title && $title != $titleKey) {
+                $this->qf->config->page_title = $title;
+            }
+            if ($description && $description != $descriptionKey) {
+                $this->qf->config->meta_description = $description;
+            }
         }
         
         return $content;

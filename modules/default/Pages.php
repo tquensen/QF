@@ -15,8 +15,8 @@ class default_Pages extends qfController
     public function home($parameter = array())
     {
         //set title/description
-        //$this->qf->config->page_title = $this->qf->t->example_home_title;
-        //$this->qf->config->meta_description = $this->qf->t->example_home_description;
+        //$this->qf->config->page_title = $this->qf->t->default_home_title;
+        //$this->qf->config->meta_description = $this->qf->t->default_home_description;
         //
         //this is the default: (if returned null or an array $parameters)
         //return $this->qf->parse('default', 'home', $parameter);

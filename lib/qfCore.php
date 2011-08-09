@@ -137,7 +137,7 @@ class qfCore
             }
             return $this->parse($module, $page, $parameter);
         }
-        return false;
+        return $this->parse('error', '404');
     }
 
     /**
